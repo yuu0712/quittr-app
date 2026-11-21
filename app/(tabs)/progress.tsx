@@ -238,7 +238,7 @@ export default function ProgressScreen() {
         {/* ── on track to ────────────────────────────────────── */}
         <Text style={styles.onTrack}>You&apos;re on track to:</Text>
         <View style={styles.pill}>
-          <Text style={styles.pillText}>ZYN-Free by {targetText}</Text>
+          <Text style={styles.pillText}>Pouch-Free by {targetText}</Text>
         </View>
 
         {/* ── benefits ───────────────────────────────────────── */}

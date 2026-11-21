@@ -150,3 +150,14 @@ public repo なら Actions 分数は無料なので、この心配はほぼ消�
 npm run build:android:local   # eas build --local --platform android
 npm run build:ios:local       # ※ iOS の --local は Mac が必須
 ```
+
+## 公開準備（v1.3）
+
+- 公開名を **Quit Pouches** に変更（ZYNは他社商標のため）。app.json の name、
+  ホームのワードマーク、Progress のピル（Pouch-Free by …）を変更。
+  bundle ID / パッケージ名は `com.quitpouches.app` に統一
+- アイコンを作成：`assets/icon.png`（1024×1024、角の黒を背景色に補正済み）、
+  `adaptive-icon.png`、`splash-icon.png`。ホームのオーブ＋チェック印がモチーフ
+- プライバシーポリシーとサポートページを `docs/` に用意
+  （GitHub Pages で /docs を公開するとそのままストア提出用URLになる）
+- 依存パッチを SDK 58 最新に更新（expo 58.0.26 / expo-router 58.0.32、doctor 20/20）

@@ -101,7 +101,7 @@ export default function HomeScreen() {
       {/* ── topbar ─────────────────────────────────────────── */}
       <View style={styles.topbar}>
         <View>
-          <Text style={styles.wordmark}>App</Text>
+          <Text style={styles.wordmark}>Quit Pouches</Text>
           <Text style={styles.wordmarkSub}>◡</Text>
         </View>
         <LinearGradient

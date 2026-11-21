@@ -2,9 +2,10 @@
   "expo": {
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#08090b"
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#090f1f"
       },
-      "package": "com.quittr.app",
+      "package": "com.quitpouches.app",
       "softwareKeyboardLayoutMode": "pan"
     },
     "backgroundColor": "#08090b",
@@ -12,23 +13,19 @@
       "typedRoutes": true
     },
     "extra": {
-      "router": {
-        "asyncRoutes": {
-          "web": true
-        }
-      },
       "eas": {
         "projectId": "8c275ed3-90a2-4edb-acb0-bb5aab57e0a4"
-      }
+      },
+      "router": {}
     },
     "ios": {
-      "bundleIdentifier": "com.quittr.app",
+      "bundleIdentifier": "com.quitpouches.app",
       "infoPlist": {
         "UIUserInterfaceStyle": "Dark"
       },
       "supportsTablet": false
     },
-    "name": "Quit ZYN",
+    "name": "Quit Pouches",
     "orientation": "portrait",
     "plugins": [
       "expo-router"
@@ -41,6 +38,6 @@
       "bundler": "metro",
       "output": "static"
     },
-    "owner": "yuu0712"
+    "icon": "./assets/icon.png"
   }
 }
