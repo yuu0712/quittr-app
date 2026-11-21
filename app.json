@@ -21,7 +21,8 @@
     "ios": {
       "bundleIdentifier": "com.quitpouches.app",
       "infoPlist": {
-        "UIUserInterfaceStyle": "Dark"
+        "UIUserInterfaceStyle": "Dark",
+        "ITSAppUsesNonExemptEncryption": false
       },
       "supportsTablet": false
     },
@@ -38,6 +39,12 @@
       "bundler": "metro",
       "output": "static"
     },
-    "icon": "./assets/icon.png"
+    "icon": "./assets/icon.png",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/8c275ed3-90a2-4edb-acb0-bb5aab57e0a4"
+    }
   }
 }
