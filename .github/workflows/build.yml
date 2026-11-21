@@ -1,0 +1,157 @@
+name: Build (EAS local)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Why `eas build --local` instead of plain `eas build`?
+#
+# Plain `eas build` queues the build on EAS Cloud and consumes your EAS
+# build quota / priority minutes (the free plan's allowance is small).
+# `--local` runs the exact same EAS build pipeline ON THIS RUNNER instead:
+# EAS is only contacted to fetch your credentials / project config, so the
+# EAS build quota is NOT consumed. The cost moves to GitHub Actions minutes.
+#
+# The only secret this workflow needs is EXPO_TOKEN (an Expo access token,
+# used by eas-cli to download iOS/Android credentials). No Apple / Google
+# passwords are stored in GitHub — keystores / provisioning profiles live in
+# EAS credentials and are fetched with that token.
+#
+# Trigger is manual only (workflow_dispatch) on purpose: at the expected
+# cadence of ~6–7 builds/month you stay in control of the minute spend and
+# never burn minutes on every push.
+# ─────────────────────────────────────────────────────────────────────────────
+
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: Platform to build
+        type: choice
+        required: true
+        default: all
+        options:
+          - all
+          - android
+          - ios
+      profile:
+        description: EAS build profile (eas.json)
+        type: choice
+        required: true
+        default: production
+        options:
+          - production
+          - preview
+          - development
+
+permissions:
+  contents: read
+
+concurrency:
+  group: eas-local-${{ inputs.platform }}-${{ inputs.profile }}
+  cancel-in-progress: false
+
+env:
+  EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+  EXPO_NO_TELEMETRY: "1"
+  CI: "1"
+
+jobs:
+  # ── Android ────────────────────────────────────────────────────────────────
+  android:
+    name: Android (${{ inputs.profile }})
+    if: inputs.platform == 'all' || inputs.platform == 'android'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Setup Java 17 (Android / Gradle)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Install dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Install EAS CLI
+        run: npm install -g eas-cli@latest
+
+      - name: Build locally with EAS (does not use EAS Cloud quota)
+        run: >
+          eas build --local
+          --non-interactive
+          --platform android
+          --profile ${{ inputs.profile }}
+          --output ./build/app-android.${{ inputs.profile == 'preview' && 'apk' || 'aab' }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-${{ inputs.profile }}-${{ github.run_number }}
+          path: build/
+          if-no-files-found: error
+          retention-days: 14
+
+  # ── iOS ────────────────────────────────────────────────────────────────────
+  # NOTE: --local iOS builds must run on macOS (Xcode). GitHub bills macOS
+  # runners at 10x the Linux minute rate on private repos — this is the main
+  # reason to keep the cadence at ~6–7 builds/month and to build Android-only
+  # when you don't need a fresh iOS binary.
+  ios:
+    name: iOS (${{ inputs.profile }})
+    if: inputs.platform == 'all' || inputs.platform == 'ios'
+    runs-on: macos-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Install EAS CLI
+        run: npm install -g eas-cli@latest
+
+      - name: Build locally with EAS (does not use EAS Cloud quota)
+        run: >
+          eas build --local
+          --non-interactive
+          --platform ios
+          --profile ${{ inputs.profile }}
+          --output ./build/app-ios.ipa
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-${{ inputs.profile }}-${{ github.run_number }}
+          path: build/
+          if-no-files-found: error
+          retention-days: 14
