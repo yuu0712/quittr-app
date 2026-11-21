@@ -21,12 +21,11 @@
     "ios": {
       "bundleIdentifier": "com.quitpouches.app",
       "infoPlist": {
-        "UIUserInterfaceStyle": "Dark",
-        "ITSAppUsesNonExemptEncryption": false
+        "UIUserInterfaceStyle": "Dark"
       },
       "supportsTablet": false
     },
-    "name": "Quit Pouches",
+    "name": "LastPouch",
     "orientation": "portrait",
     "plugins": [
       "expo-router"
@@ -40,11 +39,11 @@
       "output": "static"
     },
     "icon": "./assets/icon.png",
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
     "updates": {
       "url": "https://u.expo.dev/8c275ed3-90a2-4edb-acb0-bb5aab57e0a4"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
     }
   }
 }
