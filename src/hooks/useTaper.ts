@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useFocusEffect } from 'expo-router';
 
 import {
   addDaysKey,
@@ -64,38 +65,43 @@ export function useTaper(): TaperDerived {
   const ref = useRef<TaperState | null>(null);
   ref.current = taper;
 
-  useEffect(() => {
-    let alive = true;
-    void (async () => {
-      const loaded = await loadTaper();
-      if (!alive) return;
-      if (loaded && loaded.mode === 'tapering') {
-        // Zero Day reached? Hand off to the existing streak record.
-        const zero = zeroDateKey(loaded.startDate, loaded.weeks);
-        if (todayKey() >= zero && loaded.weeks.length > 0) {
-          const done: TaperState = { ...loaded, mode: 'done' };
-          await saveTaper(done);
-          const streak = await loadStreak();
-          const [y, m, d] = zero.split('-').map((s) => parseInt(s, 10));
-          await saveStreak({
-            startAt: new Date(y ?? 1970, (m ?? 1) - 1, d ?? 1).getTime(),
-            relapses: streak.relapses,
-            pledgedOn: null,
-          });
-          if (alive) setTaper(done);
-          setLoading(false);
-          return;
-        }
+  // Tab screens now stay mounted (real Tabs navigator), so data is
+  // reloaded on focus as well as on mount to stay fresh across tabs.
+  const reload = useCallback(async () => {
+    const loaded = await loadTaper();
+    if (loaded && loaded.mode === 'tapering') {
+      // Zero Day reached? Hand off to the existing streak record.
+      const zero = zeroDateKey(loaded.startDate, loaded.weeks);
+      if (todayKey() >= zero && loaded.weeks.length > 0) {
+        const done: TaperState = { ...loaded, mode: 'done' };
+        await saveTaper(done);
+        const streak = await loadStreak();
+        const [y, m, d] = zero.split('-').map((s) => parseInt(s, 10));
+        await saveStreak({
+          startAt: new Date(y ?? 1970, (m ?? 1) - 1, d ?? 1).getTime(),
+          relapses: streak.relapses,
+          pledgedOn: null,
+        });
+        setTaper(done);
+        setLoading(false);
+        return;
       }
-      if (alive) setTaper(loaded);
-      setLoading(false);
-    })();
-    const id = setInterval(() => setToday(todayKey()), 30_000);
-    return () => {
-      alive = false;
-      clearInterval(id);
-    };
+    }
+    setTaper(loaded);
+    setLoading(false);
   }, []);
+
+  useEffect(() => {
+    void reload();
+    const id = setInterval(() => setToday(todayKey()), 30_000);
+    return () => clearInterval(id);
+  }, [reload]);
+
+  useFocusEffect(
+    useCallback(() => {
+      void reload();
+    }, [reload]),
+  );
 
   const persist = useCallback(async (next: TaperState | null) => {
     setTaper(next);

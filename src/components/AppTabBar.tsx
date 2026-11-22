@@ -1,52 +1,68 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { usePathname, useRouter, type Href } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+/** Minimal shape of the props the Tabs navigator passes to a custom tabBar. */
+export interface AppTabBarProps {
+  state: {
+    index: number;
+    routes: readonly { key: string; name: string }[];
+  };
+  navigateToTab: (routeKey: string) => void;
+}
 
 import { colors } from '../theme';
 
-interface TabDef {
-  href: Href;
-  match: string;
-  icon: string;
-  label: string;
-}
-
 /** Icons / labels are the exact glyphs used in the comp's tabbar. */
-const TABS: readonly TabDef[] = [
-  { href: '/', match: '/', icon: '◆', label: 'Home' },
-  { href: '/progress', match: '/progress', icon: '▥', label: 'Progress' },
-  { href: '/journal', match: '/journal', icon: '▤', label: 'Journal' },
-  { href: '/support', match: '/support', icon: '▦', label: 'Learn' },
-  { href: '/profile', match: '/profile', icon: '◉', label: 'Profile' },
-] as const;
+const TAB_BY_ROUTE: Readonly<Record<string, { icon: string; label: string }>> = {
+  index: { icon: '◆', label: 'Home' },
+  progress: { icon: '▥', label: 'Progress' },
+  journal: { icon: '▤', label: 'Journal' },
+  support: { icon: '▦', label: 'Learn' },
+  profile: { icon: '◉', label: 'Profile' },
+};
 
-export function AppTabBar() {
-  const pathname = usePathname();
-  const router = useRouter();
+/** Visible bar height above the home-indicator area (comp: 55px). */
+const BAR_HEIGHT = 55;
+
+export function AppTabBar({ state, navigateToTab }: AppTabBarProps) {
   const insets = useSafeAreaInsets();
 
   return (
     <View
       style={[
         styles.bar,
-        { paddingBottom: Math.max(1, insets.bottom > 0 ? 4 : 1) },
+        {
+          // Total height grows by the safe-area inset instead of padding
+          // squeezing the content, so the row can never wrap or step.
+          height: BAR_HEIGHT + insets.bottom,
+          paddingBottom: insets.bottom,
+        },
       ]}
     >
-      {TABS.map((tab) => {
-        const active = pathname === tab.match;
+      {state.routes.map((route, i) => {
+        const def = TAB_BY_ROUTE[route.name];
+        if (!def) return null;
+        const active = state.index === i;
         const tint = active ? colors.tabActive : colors.tabInactive;
         return (
           <Pressable
-            key={tab.label}
+            key={route.key}
             accessibilityRole="button"
             accessibilityState={{ selected: active }}
             onPress={() => {
-              if (!active) router.replace(tab.href);
+              if (!active) navigateToTab(route.key);
             }}
             style={styles.tab}
           >
-            <Text style={[styles.icon, { color: tint }]}>{tab.icon}</Text>
-            <Text style={[styles.label, { color: tint }]}>{tab.label}</Text>
+            {/* Fixed-size icon box: glyph metrics differ per symbol and
+                per platform font, so without this box individual tabs
+                sit at different heights (the "stepped" look). */}
+            <View style={styles.iconBox}>
+              <Text style={[styles.icon, { color: tint }]}>{def.icon}</Text>
+            </View>
+            <Text style={[styles.label, { color: tint }]} numberOfLines={1}>
+              {def.label}
+            </Text>
           </Pressable>
         );
       })}
@@ -56,10 +72,8 @@ export function AppTabBar() {
 
 const styles = StyleSheet.create({
   bar: {
-    height: 55,
     flexDirection: 'row',
-    alignItems: 'center',
-    paddingTop: 3,
+    alignItems: 'stretch',
     paddingHorizontal: 10,
     borderTopWidth: 1,
     borderTopColor: colors.tabBarBorder,
@@ -69,13 +83,23 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     alignItems: 'center',
-    gap: 2,
+    justifyContent: 'center',
+  },
+  iconBox: {
+    width: 28,
+    height: 26,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   icon: {
-    fontSize: 21,
-    lineHeight: 24,
+    fontSize: 20,
+    lineHeight: 22,
+    textAlign: 'center',
+    includeFontPadding: false,
   },
   label: {
     fontSize: 9,
+    lineHeight: 11,
+    marginTop: 1,
   },
 });

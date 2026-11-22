@@ -3,27 +3,33 @@
 App Store Connect の各欄にそのまま貼れる形。英語（米国市場向け）。
 
 ## Name（30文字まで）
+
 ```
 LastPouch
 ```
 
 ## Subtitle（30文字まで）
+
 ```
-Taper Down & Quit for Good
+Taper Down \& Quit for Good
 ```
 
 ## Promotional Text（170文字まで・審査なしで後から変更可）
+
 ```
 Cold turkey not working? Step down gradually with a personal taper ladder — or track a clean streak. Daily limits, a panic button for cravings, and lessons that explain what's happening.
 ```
 
 ## Keywords（100文字まで・カンマ区切り、スペースなし）
+
 ```
 nicotine pouch,quit zyn,snus,quit nicotine,taper,streak tracker,craving,pouch free,last pouch
 ```
+
 （93文字）
 
 ## Description
+
 ```
 LastPouch helps you stop using nicotine pouches — your way.
 
@@ -54,16 +60,19 @@ Not affiliated with any nicotine pouch brand.
 ```
 
 ## What's New（初回）
+
 ```
 First release: streak tracking, personal taper plans, the Panic Button, a daily journal, and the Learn library.
 ```
 
 ## 設定値メモ
-- Primary Category: **Health & Fitness** / Secondary: **Lifestyle**
-- Privacy Policy URL: https://yuu0712.github.io/quittr-app/privacy-policy.html
-- Support URL: https://yuu0712.github.io/quittr-app/support.html
-- App Privacy（データ収集申告）: **Data Not Collected**（全項目なし）
-- Age Rating: 質問票で「Alcohol, Tobacco, or Drug Use or References」を申告 → **17+** になる見込み
-- Price: Free（v1.0は課金なし）
-- スクリーンショット: `store-screenshots/` の5枚（1320×2868、6.9インチ枠にアップロード）
-  01 ホーム（テーパー中）/ 02 Panicモーダル / 03 Progress階段図 / 04 Learn / 05 記事
+
+* Primary Category: **Health \& Fitness** / Secondary: **Lifestyle**
+* Privacy Policy URL: https://yuu0712.github.io/quittr-app/privacy-policy.html
+* Support URL: https://yuu0712.github.io/quittr-app/support.html
+* App Privacy（データ収集申告）: **Data Not Collected**（全項目なし）
+* Age Rating: 質問票で「Alcohol, Tobacco, or Drug Use or References」を申告 → **17+** になる見込み
+* Price: Free（v1.0は課金なし）
+* スクリーンショット: `store-screenshots/` の5枚（1320×2868、6.9インチ枠にアップロード）
+01 ホーム（テーパー中）/ 02 Panicモーダル / 03 Progress階段図 / 04 Learn / 05 記事
+

@@ -1,25 +1,27 @@
-import { Slot } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
+import { Tabs } from 'expo-router';
 
 import { AppTabBar } from '@/components/AppTabBar';
 import { colors } from '@/theme';
 
 /**
- * Tab shell: content + the comp's 55px bottom tab bar.
- * A custom bar (not the native one) is required to match the comp 1:1.
+ * Tab shell built on the real Tabs navigator with a custom bar.
+ * (The previous hand-rolled <Slot/> + bar shell rendered the bar twice
+ * on physical iOS devices; the navigator renders its tabBar exactly once.)
  */
 export default function TabsLayout() {
   return (
-    <View style={styles.root}>
-      <View style={styles.content}>
-        <Slot />
-      </View>
-      <AppTabBar />
-    </View>
+    <Tabs
+      tabBar={(props) => <AppTabBar {...props} />}
+      screenOptions={{
+        headerShown: false,
+        sceneStyle: { backgroundColor: colors.bg },
+      }}
+    >
+      <Tabs.Screen name="index" />
+      <Tabs.Screen name="progress" />
+      <Tabs.Screen name="journal" />
+      <Tabs.Screen name="support" />
+      <Tabs.Screen name="profile" />
+    </Tabs>
   );
 }
-
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.bg },
-  content: { flex: 1 },
-});

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useFocusEffect } from 'expo-router';
 
 import { LEVELS, SOBER_GOAL_DAYS, type Level } from '../theme';
 import {
@@ -34,17 +35,23 @@ export function useStreak(): StreakDerived {
   const stateRef = useRef<StreakState | null>(null);
   stateRef.current = state;
 
-  useEffect(() => {
-    let alive = true;
-    void loadStreak().then((s) => {
-      if (alive) setState(s);
-    });
-    const id = setInterval(() => setNow(Date.now()), 20_000);
-    return () => {
-      alive = false;
-      clearInterval(id);
-    };
+  // Tab screens now stay mounted (real Tabs navigator), so data is
+  // reloaded on focus as well as on mount to stay fresh across tabs.
+  const reload = useCallback(async () => {
+    setState(await loadStreak());
   }, []);
+
+  useEffect(() => {
+    void reload();
+    const id = setInterval(() => setNow(Date.now()), 20_000);
+    return () => clearInterval(id);
+  }, [reload]);
+
+  useFocusEffect(
+    useCallback(() => {
+      void reload();
+    }, [reload]),
+  );
 
   const persist = useCallback(async (next: StreakState) => {
     setState(next);
