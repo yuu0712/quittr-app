@@ -10,6 +10,7 @@ import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Stars } from '@/components/Stars';
+import { usePremium } from '@/hooks/usePremium';
 import { useStreak } from '@/hooks/useStreak';
 import { useTaper } from '@/hooks/useTaper';
 import { PACE_LABELS, parseDateKey } from '@/lib/taperPlan';
@@ -19,6 +20,7 @@ export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const streak = useStreak();
+  const premium = usePremium();
   const taper = useTaper();
   const t = taper.taper;
 
@@ -47,6 +49,26 @@ export default function ProfileScreen() {
           Current level: {streak.currentLevel.name} · Streak:{' '}
           {streak.durationText} · Slips: {streak.state?.relapses ?? 0}
         </Text>
+
+        <Text style={styles.section}>Premium</Text>
+        <Pressable
+          onPress={() => router.push('/paywall')}
+          style={({ pressed }) => (pressed ? styles.pressed : null)}
+        >
+          <View style={styles.premiumCard}>
+            <Text style={styles.premiumTitle}>
+              {premium.isPremium ? '✓ LastPouch Premium' : '✦ LastPouch Premium'}
+            </Text>
+            <Text style={styles.cardBody}>
+              {premium.isPremium
+                ? 'Premium is active — reminders, trigger tracking, 0mg swaps, and monthly reports are unlocked.'
+                : 'Smart reminders, trigger tracking, 0mg swap suggestions, and monthly reports. Free for 7 days.'}
+            </Text>
+            <Text style={styles.premiumCta}>
+              {premium.isPremium ? 'View details ›' : 'See plans ›'}
+            </Text>
+          </View>
+        </Pressable>
 
         <Text style={styles.section}>My Plan</Text>
         {!t || t.mode === 'done' ? (
@@ -201,6 +223,17 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   cardBody: { color: colors.muted, fontSize: 14, lineHeight: 21 },
+  pressed: { opacity: 0.85 },
+  premiumCard: {
+    borderWidth: 1,
+    borderColor: colors.featuredBorder,
+    borderRadius: 18,
+    backgroundColor: colors.featuredBgTo,
+    padding: 18,
+    gap: 12,
+  },
+  premiumTitle: { color: colors.gold, fontSize: 16, fontWeight: '800' },
+  premiumCta: { color: colors.text, fontSize: 14, fontWeight: '700' },
   cta: {
     height: 50,
     borderRadius: 25,

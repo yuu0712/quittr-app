@@ -21,6 +21,7 @@
     "ios": {
       "bundleIdentifier": "com.quitpouches.app",
       "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
         "UIUserInterfaceStyle": "Dark"
       },
       "supportsTablet": false
@@ -33,7 +34,7 @@
     "scheme": "quittr",
     "slug": "quittr-app",
     "userInterfaceStyle": "dark",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "web": {
       "bundler": "metro",
       "output": "static"

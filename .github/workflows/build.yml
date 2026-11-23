@@ -50,6 +50,8 @@ concurrency:
 
 env:
   EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+  # RevenueCat *public* SDK key (safe to ship inside the app binary).
+  EXPO_PUBLIC_REVENUECAT_KEY: appl_yPHFoXfoZwDjqytaqadXqlzALSTU
   EXPO_NO_TELEMETRY: "1"
   CI: "1"
 
