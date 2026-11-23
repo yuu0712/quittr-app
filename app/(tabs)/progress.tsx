@@ -11,6 +11,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 
 import { RecoveryRing } from '@/components/RecoveryRing';
+import { MonthlyReport } from '@/components/MonthlyReport';
 import { TaperLadder } from '@/components/TaperLadder';
 import { useStreak } from '@/hooks/useStreak';
 import { useTaper } from '@/hooks/useTaper';
@@ -163,6 +164,7 @@ export default function ProgressScreen() {
                 <Text style={styles.cardBody}>{b.body}</Text>
               </View>
             ))}
+            <MonthlyReport />
           </View>
         </ScrollView>
       </LinearGradient>
@@ -253,6 +255,8 @@ export default function ProgressScreen() {
             </View>
           ))}
         </View>
+
+        <MonthlyReport />
       </ScrollView>
     </LinearGradient>
   );

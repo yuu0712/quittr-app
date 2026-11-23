@@ -1,6 +1,21 @@
 import { useCallback, useEffect, useState } from 'react';
+import { Platform } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import type { PurchasesOffering } from 'react-native-purchases';
+
+/**
+ * Web-preview scaffolding ONLY: on web (never on iOS/Android) setting
+ * localStorage 'lp_dev_premium' = '1' renders the premium UI so the
+ * design can be checked in a browser. Has no effect in the real app.
+ */
+function devWebPremium(): boolean {
+  if (Platform.OS !== 'web') return false;
+  try {
+    return globalThis.localStorage?.getItem('lp_dev_premium') === '1';
+  } catch {
+    return false;
+  }
+}
 
 import {
   fetchCurrentOffering,
@@ -33,6 +48,11 @@ export function usePremium(): PremiumDerived {
   const [loading, setLoading] = useState(true);
 
   const refresh = useCallback(async () => {
+    if (devWebPremium()) {
+      setIsPremium(true);
+      setLoading(false);
+      return;
+    }
     const [premium, off] = await Promise.all([
       fetchIsPremium(),
       fetchCurrentOffering(),

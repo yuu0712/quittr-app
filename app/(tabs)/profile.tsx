@@ -9,6 +9,7 @@ import {
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { NotificationSettings } from '@/components/NotificationSettings';
 import { Stars } from '@/components/Stars';
 import { usePremium } from '@/hooks/usePremium';
 import { useStreak } from '@/hooks/useStreak';
@@ -69,6 +70,9 @@ export default function ProfileScreen() {
             </Text>
           </View>
         </Pressable>
+
+        <View style={{ height: 14 }} />
+        <NotificationSettings />
 
         <Text style={styles.section}>My Plan</Text>
         {!t || t.mode === 'done' ? (

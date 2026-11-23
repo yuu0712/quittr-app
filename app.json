@@ -29,7 +29,9 @@
     "name": "LastPouch",
     "orientation": "portrait",
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "expo-sharing",
+      "expo-notifications"
     ],
     "scheme": "quittr",
     "slug": "quittr-app",

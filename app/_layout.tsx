@@ -3,12 +3,14 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { View } from 'react-native';
 
+import { initNotifications } from '@/lib/notifications';
 import { configurePurchases } from '@/lib/purchases';
 import { colors } from '@/theme';
 
 export default function RootLayout() {
   useEffect(() => {
     configurePurchases();
+    initNotifications();
   }, []);
 
   return (

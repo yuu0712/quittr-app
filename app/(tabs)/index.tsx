@@ -17,8 +17,12 @@ import { Orb } from '@/components/Orb';
 import { PanicModal } from '@/components/PanicModal';
 import { SideOrb } from '@/components/SideOrb';
 import { Stars } from '@/components/Stars';
+import { usePremium } from '@/hooks/usePremium';
 import { useStreak } from '@/hooks/useStreak';
 import { useTaper } from '@/hooks/useTaper';
+import { fireLimitReachedAlert } from '@/lib/notifications';
+import { loadNotifSettings } from '@/store/notifications';
+import { addTrigger } from '@/store/triggers';
 import { colors } from '@/theme';
 
 interface QuickAction {
@@ -35,7 +39,18 @@ export default function HomeScreen() {
   const [panicOpen, setPanicOpen] = useState(false);
   const streak = useStreak();
   const taper = useTaper();
+  const premium = usePremium();
   const router = useRouter();
+
+  const handleLogPouch = async () => {
+    // Crossing the ceiling with this very pouch? (Premium limit alert)
+    const hitsLimit = taper.remaining === 1;
+    await taper.logPouch();
+    if (hitsLimit && premium.isPremium) {
+      const settings = await loadNotifSettings();
+      if (settings.limitAlert) void fireLimitReachedAlert();
+    }
+  };
 
   const taperMode = taper.taper?.mode;
   const isTapering = taperMode === 'tapering' || taperMode === 'paused';
@@ -303,7 +318,7 @@ export default function HomeScreen() {
       {isTapering || isBaseline ? (
         <Pressable
           onPress={() => {
-            void taper.logPouch();
+            void handleLogPouch();
           }}
           onLongPress={() => {
             void taper.undoPouch();
@@ -359,6 +374,15 @@ export default function HomeScreen() {
             ? 'Or delay the next one by 10 minutes. Set it down, set a timer, do something else first.'
             : undefined
         }
+        isPremium={premium.isPremium}
+        weekIndex={taper.weekIndex}
+        onLogTrigger={(kind) => {
+          void addTrigger(kind);
+        }}
+        onOpenPaywall={() => {
+          setPanicOpen(false);
+          router.push('/paywall');
+        }}
       />
     </View>
   );
